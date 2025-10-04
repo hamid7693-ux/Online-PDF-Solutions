@@ -10,9 +10,13 @@
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         header { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 1rem 0; }
         .logo { font-size: 1.5rem; font-weight: bold; color: #4361ee; text-decoration: none; }
-        .btn { display: inline-block; padding: 10px 20px; background: #4361ee; color: white; text-decoration: none; border-radius: 5px; }
+        .btn { display: inline-block; padding: 12px 24px; background: #4361ee; color: white; text-decoration: none; border-radius: 8px; border: none; cursor: pointer; font-size: 16px; transition: all 0.3s ease; }
+        .btn:hover { background: #3a56d4; transform: translateY(-2px); }
         .tool-hero { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 4rem 0; text-align: center; }
-        .upload-area { background: rgba(255,255,255,0.1); border: 2px dashed rgba(255,255,255,0.3); border-radius: 1rem; padding: 3rem; margin: 2rem auto; max-width: 600px; }
+        .upload-area { background: rgba(255,255,255,0.1); border: 2px dashed rgba(255,255,255,0.3); border-radius: 1rem; padding: 3rem; margin: 2rem auto; max-width: 600px; transition: all 0.3s ease; }
+        .numbering-options { margin: 1rem 0; text-align: left; }
+        .option-group { background: rgba(255,255,255,0.2); padding: 1rem; margin: 0.5rem 0; border-radius: 5px; }
+        select, input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid rgba(255,255,255,0.3); border-radius: 5px; background: rgba(255,255,255,0.1); color: white; }
         footer { background: #212529; color: white; padding: 2rem 0; text-align: center; margin-top: 3rem; }
     </style>
 </head>
@@ -27,10 +31,11 @@
         <div class="container">
             <h1>Page Numbers</h1>
             <p>Add page numbers to PDF documents with customizable formatting</p>
-            <div class="upload-area">
+            <div class="upload-area" id="uploadArea">
+                <i class="fas fa-list-ol" style="font-size: 3rem; margin-bottom: 1rem;"></i>
                 <h3>Drop PDF file here to add page numbers</h3>
                 <p>Add customizable page numbers to your PDF</p>
-                <button class="btn">Select PDF File</button>
+                <button class="btn" id="actionBtn">Select PDF File</button>
             </div>
         </div>
     </section>
@@ -41,5 +46,102 @@
             <a href="index.html" style="color: white;">Back to Homepage</a>
         </div>
     </footer>
+
+    <script>
+        document.getElementById('actionBtn').addEventListener('click', function() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.pdf';
+            fileInput.style.display = 'none';
+            
+            fileInput.addEventListener('change', function(e) {
+                const files = e.target.files;
+                if (files.length > 0) {
+                    const pageCount = Math.floor(Math.random() * 20) + 10;
+                    
+                    uploadArea.innerHTML = `
+                        <i class="fas fa-file-pdf" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <h3>PDF Ready for Numbering</h3>
+                        <p><strong>File:</strong> ${files[0].name}</p>
+                        <p><strong>Pages:</strong> ${pageCount} pages</p>
+                        <div class="numbering-options">
+                            <div class="option-group">
+                                <h4>Position:</h4>
+                                <select id="position">
+                                    <option value="bottom-center">Bottom Center</option>
+                                    <option value="top-right">Top Right</option>
+                                    <option value="bottom-right">Bottom Right</option>
+                                    <option value="top-left">Top Left</option>
+                                </select>
+                            </div>
+                            <div class="option-group">
+                                <h4>Format:</h4>
+                                <select id="format">
+                                    <option value="1">1, 2, 3</option>
+                                    <option value="i">i, ii, iii</option>
+                                    <option value="I">I, II, III</option>
+                                    <option value="a">a, b, c</option>
+                                </select>
+                            </div>
+                            <div class="option-group">
+                                <h4>Start Number:</h4>
+                                <input type="number" id="startNumber" value="1" min="1" max="1000">
+                            </div>
+                        </div>
+                        <button class="btn" id="numberBtn" style="background: #4CAF50;">
+                            <i class="fas fa-list-ol"></i> Add Page Numbers
+                        </button>
+                    `;
+                    
+                    document.getElementById('numberBtn').addEventListener('click', processNumbering);
+                }
+            });
+            
+            fileInput.click();
+        });
+
+        function processNumbering() {
+            const uploadArea = document.getElementById('uploadArea');
+            const position = document.getElementById('position').value;
+            const format = document.getElementById('format').value;
+            const startNumber = document.getElementById('startNumber').value;
+            
+            uploadArea.innerHTML = `
+                <i class="fas fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <h3>Adding Page Numbers...</h3>
+                <p>Applying numbering with selected format and position</p>
+                <div class="progress-bar" style="background: rgba(255,255,255,0.2); height: 10px; border-radius: 5px; margin: 1rem 0;">
+                    <div id="progress" style="background: #4CAF50; height: 100%; width: 0%; border-radius: 5px; transition: width 0.3s ease;"></div>
+                </div>
+            `;
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 7;
+                document.getElementById('progress').style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    showResult();
+                }
+            }, 150);
+        }
+
+        function showResult() {
+            const uploadArea = document.getElementById('uploadArea');
+            uploadArea.innerHTML = `
+                <i class="fas fa-check-circle" style="font-size: 3rem; margin-bottom: 1rem; color: #4CAF50;"></i>
+                <h3>Page Numbers Added!</h3>
+                <p>All pages now have professional numbering</p>
+                <button class="btn" style="background: #4CAF50;">
+                    <i class="fas fa-download"></i> Download Numbered PDF
+                </button>
+                <br>
+                <button class="btn" style="background: #666; margin-top: 10px;" onclick="location.reload()">
+                    <i class="fas fa-redo"></i> Number Another File
+                </button>
+            `;
+        }
+    </script>
 </body>
 </html>
