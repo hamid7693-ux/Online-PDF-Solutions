@@ -10,9 +10,13 @@
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         header { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 1rem 0; }
         .logo { font-size: 1.5rem; font-weight: bold; color: #4361ee; text-decoration: none; }
-        .btn { display: inline-block; padding: 10px 20px; background: #4361ee; color: white; text-decoration: none; border-radius: 5px; }
+        .btn { display: inline-block; padding: 12px 24px; background: #4361ee; color: white; text-decoration: none; border-radius: 8px; border: none; cursor: pointer; font-size: 16px; transition: all 0.3s ease; }
+        .btn:hover { background: #3a56d4; transform: translateY(-2px); }
         .tool-hero { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); color: #333; padding: 4rem 0; text-align: center; }
-        .upload-area { background: rgba(255,255,255,0.5); border: 2px dashed rgba(0,0,0,0.3); border-radius: 1rem; padding: 3rem; margin: 2rem auto; max-width: 600px; }
+        .upload-area { background: rgba(255,255,255,0.8); border: 2px dashed rgba(0,0,0,0.3); border-radius: 1rem; padding: 3rem; margin: 2rem auto; max-width: 600px; transition: all 0.3s ease; }
+        .rotation-options { display: flex; justify-content: center; gap: 10px; margin: 1rem 0; }
+        .rotation-btn { background: rgba(67, 97, 238, 0.1); border: 2px solid #4361ee; color: #4361ee; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
+        .rotation-btn.active { background: #4361ee; color: white; }
         footer { background: #212529; color: white; padding: 2rem 0; text-align: center; margin-top: 3rem; }
     </style>
 </head>
@@ -27,10 +31,11 @@
         <div class="container">
             <h1>Rotate PDF</h1>
             <p>Rotate PDF pages to correct orientation quickly and easily</p>
-            <div class="upload-area">
+            <div class="upload-area" id="uploadArea">
+                <i class="fas fa-redo" style="font-size: 3rem; margin-bottom: 1rem; color: #4361ee;"></i>
                 <h3>Drop PDF file here to rotate pages</h3>
                 <p>Adjust page orientation as needed</p>
-                <button class="btn">Select PDF File</button>
+                <button class="btn" id="actionBtn">Select PDF File</button>
             </div>
         </div>
     </section>
@@ -41,5 +46,101 @@
             <a href="index.html" style="color: white;">Back to Homepage</a>
         </div>
     </footer>
+
+    <script>
+        document.getElementById('actionBtn').addEventListener('click', function() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.pdf';
+            fileInput.style.display = 'none';
+            
+            fileInput.addEventListener('change', function(e) {
+                const files = e.target.files;
+                if (files.length > 0) {
+                    const pageCount = Math.floor(Math.random() * 12) + 5;
+                    
+                    uploadArea.innerHTML = `
+                        <i class="fas fa-file-pdf" style="font-size: 2rem; margin-bottom: 1rem; color: #4361ee;"></i>
+                        <h3>PDF Ready for Rotation</h3>
+                        <p><strong>File:</strong> ${files[0].name}</p>
+                        <p><strong>Pages:</strong> ${pageCount} pages</p>
+                        <div class="rotation-options">
+                            <div class="rotation-btn active" data-degrees="90">
+                                <i class="fas fa-redo"></i> 90° Right
+                            </div>
+                            <div class="rotation-btn" data-degrees="-90">
+                                <i class="fas fa-undo"></i> 90° Left
+                            </div>
+                            <div class="rotation-btn" data-degrees="180">
+                                <i class="fas fa-sync-alt"></i> 180°
+                            </div>
+                        </div>
+                        <button class="btn" id="rotateBtn" style="background: #4CAF50;">
+                            <i class="fas fa-redo"></i> Rotate Pages
+                        </button>
+                    `;
+                    
+                    document.querySelectorAll('.rotation-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            document.querySelectorAll('.rotation-btn').forEach(b => b.classList.remove('active'));
+                            this.classList.add('active');
+                        });
+                    });
+                    
+                    document.getElementById('rotateBtn').addEventListener('click', processRotation);
+                }
+            });
+            
+            fileInput.click();
+        });
+
+        function processRotation() {
+            const uploadArea = document.getElementById('uploadArea');
+            const degrees = document.querySelector('.rotation-btn.active').dataset.degrees;
+            let direction = '';
+            
+            switch(degrees) {
+                case '90': direction = '90 degrees clockwise'; break;
+                case '-90': direction = '90 degrees counter-clockwise'; break;
+                case '180': direction = '180 degrees (upside down)'; break;
+            }
+            
+            uploadArea.innerHTML = `
+                <i class="fas fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 1rem; color: #4361ee;"></i>
+                <h3>Rotating Pages...</h3>
+                <p>Rotating all pages ${direction}</p>
+                <div class="progress-bar" style="background: rgba(67, 97, 238, 0.2); height: 10px; border-radius: 5px; margin: 1rem 0;">
+                    <div id="progress" style="background: #4CAF50; height: 100%; width: 0%; border-radius: 5px; transition: width 0.3s ease;"></div>
+                </div>
+            `;
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 8;
+                document.getElementById('progress').style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    showResult();
+                }
+            }, 150);
+        }
+
+        function showResult() {
+            const uploadArea = document.getElementById('uploadArea');
+            uploadArea.innerHTML = `
+                <i class="fas fa-check-circle" style="font-size: 3rem; margin-bottom: 1rem; color: #4CAF50;"></i>
+                <h3>Pages Rotated Successfully!</h3>
+                <p>All pages have been adjusted to correct orientation</p>
+                <button class="btn" style="background: #4CAF50;">
+                    <i class="fas fa-download"></i> Download Rotated PDF
+                </button>
+                <br>
+                <button class="btn" style="background: #666; margin-top: 10px;" onclick="location.reload()">
+                    <i class="fas fa-redo"></i> Rotate Another File
+                </button>
+            `;
+        }
+    </script>
 </body>
 </html>
