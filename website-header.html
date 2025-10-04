@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocRocket Tools - Free Online PDF Solutions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 90%;
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #4361ee;
+        }
+
+        .website-name {
+            font-size: 3.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            color: #666;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .feature {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 4px solid #4361ee;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #4361ee;
+            border: 2px solid #4361ee;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            color: #666;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4361ee;
+        }
+
+        @media (max-width: 768px) {
+            .website-name {
+                font-size: 2.5rem;
+            }
+            
+            .tagline {
+                font-size: 1.2rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <!-- Logo -->
+        <div class="logo">🚀</div>
+        
+        <!-- Website Name -->
+        <h1 class="website-name">DocRocket Tools</h1>
+        
+        <!-- Tagline -->
+        <p class="tagline">Blast Through Your Document Tasks with Speed & Precision</p>
+        
+        <!-- Features Grid -->
+        <div class="features">
+            <div class="feature">
+                <strong>28+ Tools</strong>
+                <p>Complete PDF Solutions</p>
+            </div>
+            <div class="feature">
+                <strong>100% Free</strong>
+                <p>No Hidden Costs</p>
+            </div>
+            <div class="feature">
+                <strong>Instant Processing</strong>
+                <p>Lightning Fast</p>
+            </div>
+            <div class="feature">
+                <strong>Secure & Safe</strong>
+                <p>Your Files Protected</p>
+            </div>
+        </div>
+        
+        <!-- Call to Action Buttons -->
+        <div class="cta-buttons">
+            <a href="index.html" class="btn btn-primary">Explore All Tools</a>
+            <a href="#features" class="btn btn-secondary">How It Works</a>
+        </div>
+        
+        <!-- Statistics -->
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number">28+</div>
+                <div>PDF Tools</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">100%</div>
+                <div>Free Forever</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">⚡</div>
+                <div>Instant Results</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple animation for stats
+        document.addEventListener('DOMContentLoaded', function() {
+            const stats = document.querySelectorAll('.stat-number');
+            
+            stats.forEach(stat => {
+                const finalValue = stat.textContent;
+                let currentValue = 0;
+                
+                if (finalValue !== '⚡') {
+                    const increment = finalValue / 20;
+                    const timer = setInterval(() => {
+                        currentValue += increment;
+                        if (currentValue >= finalValue) {
+                            stat.textContent = finalValue;
+                            clearInterval(timer);
+                        } else {
+                            stat.textContent = Math.floor(currentValue);
+                        }
+                    }, 50);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
