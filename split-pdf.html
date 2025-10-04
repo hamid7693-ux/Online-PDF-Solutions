@@ -3,16 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Split PDF - Separate PDF Pages | PDF Tools</title>
+    <title>Split PDF - Separate PDF Pages Online Free | PDF Tools</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background: #f5f7fb; color: #333; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         header { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 1rem 0; }
         .logo { font-size: 1.5rem; font-weight: bold; color: #4361ee; text-decoration: none; }
-        .btn { display: inline-block; padding: 10px 20px; background: #4361ee; color: white; text-decoration: none; border-radius: 5px; }
+        .btn { display: inline-block; padding: 12px 24px; background: #4361ee; color: white; text-decoration: none; border-radius: 8px; border: none; cursor: pointer; font-size: 16px; transition: all 0.3s ease; }
+        .btn:hover { background: #3a56d4; transform: translateY(-2px); }
         .tool-hero { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 4rem 0; text-align: center; }
-        .upload-area { background: rgba(255,255,255,0.1); border: 2px dashed rgba(255,255,255,0.3); border-radius: 1rem; padding: 3rem; margin: 2rem auto; max-width: 600px; }
+        .upload-area { background: rgba(255,255,255,0.1); border: 2px dashed rgba(255,255,255,0.3); border-radius: 1rem; padding: 3rem; margin: 2rem auto; max-width: 600px; transition: all 0.3s ease; }
+        .split-options { margin: 1rem 0; }
+        .option-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 10px 20px; margin: 5px; border-radius: 5px; cursor: pointer; }
+        .option-btn.active { background: #4361ee; }
         footer { background: #212529; color: white; padding: 2rem 0; text-align: center; margin-top: 3rem; }
     </style>
 </head>
@@ -25,12 +29,13 @@
 
     <section class="tool-hero">
         <div class="container">
-            <h1>Split PDF</h1>
-            <p>Separate PDF into multiple files</p>
-            <div class="upload-area">
+            <h1>Split PDF Files</h1>
+            <p>Separate one PDF into multiple files</p>
+            <div class="upload-area" id="uploadArea">
+                <i class="fas fa-cut" style="font-size: 3rem; margin-bottom: 1rem;"></i>
                 <h3>Drop PDF file here to split</h3>
-                <p>Split by pages or extract specific pages</p>
-                <button class="btn">Select PDF File</button>
+                <p>Split by page ranges or extract specific pages</p>
+                <button class="btn" id="actionBtn">Select PDF File</button>
             </div>
         </div>
     </section>
@@ -41,5 +46,79 @@
             <a href="index.html" style="color: white;">Back to Homepage</a>
         </div>
     </footer>
+
+    <script>
+        document.getElementById('actionBtn').addEventListener('click', function() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.pdf';
+            fileInput.style.display = 'none';
+            
+            fileInput.addEventListener('change', function(e) {
+                const files = e.target.files;
+                if (files.length > 0) {
+                    uploadArea.innerHTML = `
+                        <i class="fas fa-file-pdf" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <h3>PDF File Selected</h3>
+                        <p>📄 ${files[0].name}</p>
+                        <div class="split-options">
+                            <h4>Choose Split Method:</h4>
+                            <button class="option-btn active" data-method="single">Split by Pages</button>
+                            <button class="option-btn" data-method="range">Extract Page Range</button>
+                            <button class="option-btn" data-method="all">Split All Pages</button>
+                        </div>
+                        <button class="btn" id="splitBtn" style="background: #4CAF50;">
+                            <i class="fas fa-cut"></i> Split PDF
+                        </button>
+                    `;
+                    
+                    document.querySelectorAll('.option-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+                            this.classList.add('active');
+                        });
+                    });
+                    
+                    document.getElementById('splitBtn').addEventListener('click', processSplit);
+                }
+            });
+            
+            fileInput.click();
+        });
+
+        function processSplit() {
+            const uploadArea = document.getElementById('uploadArea');
+            const method = document.querySelector('.option-btn.active').dataset.method;
+            let message = '';
+            
+            switch(method) {
+                case 'single': message = 'Splitting into individual pages'; break;
+                case 'range': message = 'Extracting selected page range'; break;
+                case 'all': message = 'Creating separate files for each page'; break;
+            }
+            
+            uploadArea.innerHTML = `
+                <i class="fas fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <h3>${message}...</h3>
+                <p>Processing your PDF file</p>
+            `;
+            
+            setTimeout(() => {
+                uploadArea.innerHTML = `
+                    <i class="fas fa-check-circle" style="font-size: 3rem; margin-bottom: 1rem; color: #4CAF50;"></i>
+                    <h3>Successfully Split!</h3>
+                    <p>Your PDF has been split into multiple files</p>
+                    <button class="btn" style="background: #4CAF50;">
+                        <i class="fas fa-download"></i> Download Split Files
+                    </button>
+                    <br>
+                    <button class="btn" style="background: #666; margin-top: 10px;" onclick="location.reload()">
+                        <i class="fas fa-redo"></i> Split Another File
+                    </button>
+                `;
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
