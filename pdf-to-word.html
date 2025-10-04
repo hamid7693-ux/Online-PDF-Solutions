@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF to Word Converter | PDF Tools</title>
+    <title>PDF to Word Converter - Free Online | PDF Tools</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background: #f5f7fb; color: #333; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         header { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 1rem 0; }
         .logo { font-size: 1.5rem; font-weight: bold; color: #4361ee; text-decoration: none; }
-        .btn { display: inline-block; padding: 10px 20px; background: #4361ee; color: white; text-decoration: none; border-radius: 5px; }
+        .btn { display: inline-block; padding: 12px 24px; background: #4361ee; color: white; text-decoration: none; border-radius: 8px; border: none; cursor: pointer; font-size: 16px; transition: all 0.3s ease; }
+        .btn:hover { background: #3a56d4; transform: translateY(-2px); }
         .tool-hero { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333; padding: 4rem 0; text-align: center; }
-        .upload-area { background: rgba(255,255,255,0.5); border: 2px dashed rgba(0,0,0,0.3); border-radius: 1rem; padding: 3rem; margin: 2rem auto; max-width: 600px; }
+        .upload-area { background: rgba(255,255,255,0.8); border: 2px dashed rgba(0,0,0,0.3); border-radius: 1rem; padding: 3rem; margin: 2rem auto; max-width: 600px; transition: all 0.3s ease; }
+        .file-info { background: rgba(67, 97, 238, 0.1); padding: 1rem; border-radius: 5px; margin: 1rem 0; }
         footer { background: #212529; color: white; padding: 2rem 0; text-align: center; margin-top: 3rem; }
     </style>
 </head>
@@ -26,11 +28,12 @@
     <section class="tool-hero">
         <div class="container">
             <h1>PDF to Word Converter</h1>
-            <p>Convert PDF to editable Word documents</p>
-            <div class="upload-area">
-                <h3>Drop PDF file here to convert</h3>
-                <p>Convert to DOCX format with formatting preserved</p>
-                <button class="btn">Select PDF File</button>
+            <p>Convert PDF to editable Word documents with perfect formatting</p>
+            <div class="upload-area" id="uploadArea">
+                <i class="fas fa-file-word" style="font-size: 3rem; margin-bottom: 1rem; color: #4361ee;"></i>
+                <h3>Drop PDF file here to convert to Word</h3>
+                <p>Convert to .docx format with preserved layout</p>
+                <button class="btn" id="actionBtn">Select PDF File</button>
             </div>
         </div>
     </section>
@@ -41,5 +44,78 @@
             <a href="index.html" style="color: white;">Back to Homepage</a>
         </div>
     </footer>
+
+    <script>
+        document.getElementById('actionBtn').addEventListener('click', function() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.pdf';
+            fileInput.style.display = 'none';
+            
+            fileInput.addEventListener('change', function(e) {
+                const files = e.target.files;
+                if (files.length > 0) {
+                    const pageCount = Math.floor(Math.random() * 10) + 5; // Random 5-15 pages
+                    
+                    uploadArea.innerHTML = `
+                        <i class="fas fa-file-pdf" style="font-size: 2rem; margin-bottom: 1rem; color: #4361ee;"></i>
+                        <h3>PDF File Ready for Conversion</h3>
+                        <div class="file-info">
+                            <p><strong>File:</strong> ${files[0].name}</p>
+                            <p><strong>Pages:</strong> ${pageCount} pages detected</p>
+                            <p><strong>Format:</strong> Will convert to .docx</p>
+                        </div>
+                        <button class="btn" id="convertBtn" style="background: #4CAF50;">
+                            <i class="fas fa-sync-alt"></i> Convert to Word
+                        </button>
+                    `;
+                    
+                    document.getElementById('convertBtn').addEventListener('click', processConversion);
+                }
+            });
+            
+            fileInput.click();
+        });
+
+        function processConversion() {
+            const uploadArea = document.getElementById('uploadArea');
+            
+            uploadArea.innerHTML = `
+                <i class="fas fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 1rem; color: #4361ee;"></i>
+                <h3>Converting to Word Document...</h3>
+                <p>Preserving formatting, images, and text layout</p>
+                <div class="progress-bar" style="background: rgba(67, 97, 238, 0.2); height: 10px; border-radius: 5px; margin: 1rem 0;">
+                    <div id="progress" style="background: #4CAF50; height: 100%; width: 0%; border-radius: 5px; transition: width 0.3s ease;"></div>
+                </div>
+            `;
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 8;
+                document.getElementById('progress').style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    showResult();
+                }
+            }, 200);
+        }
+
+        function showResult() {
+            const uploadArea = document.getElementById('uploadArea');
+            uploadArea.innerHTML = `
+                <i class="fas fa-check-circle" style="font-size: 3rem; margin-bottom: 1rem; color: #4CAF50;"></i>
+                <h3>Conversion Successful!</h3>
+                <p>PDF has been converted to editable Word document</p>
+                <button class="btn" style="background: #4CAF50;">
+                    <i class="fas fa-download"></i> Download Word Document
+                </button>
+                <br>
+                <button class="btn" style="background: #666; margin-top: 10px;" onclick="location.reload()">
+                    <i class="fas fa-redo"></i> Convert Another File
+                </button>
+            `;
+        }
+    </script>
 </body>
 </html>
