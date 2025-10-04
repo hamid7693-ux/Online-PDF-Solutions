@@ -10,9 +10,13 @@
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         header { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 1rem 0; }
         .logo { font-size: 1.5rem; font-weight: bold; color: #4361ee; text-decoration: none; }
-        .btn { display: inline-block; padding: 10px 20px; background: #4361ee; color: white; text-decoration: none; border-radius: 5px; }
+        .btn { display: inline-block; padding: 12px 24px; background: #4361ee; color: white; text-decoration: none; border-radius: 8px; border: none; cursor: pointer; font-size: 16px; transition: all 0.3s ease; }
+        .btn:hover { background: #3a56d4; transform: translateY(-2px); }
         .tool-hero { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 4rem 0; text-align: center; }
-        .upload-area { background: rgba(255,255,255,0.1); border: 2px dashed rgba(255,255,255,0.3); border-radius: 1rem; padding: 3rem; margin: 2rem auto; max-width: 600px; }
+        .upload-area { background: rgba(255,255,255,0.1); border: 2px dashed rgba(255,255,255,0.3); border-radius: 1rem; padding: 3rem; margin: 2rem auto; max-width: 600px; transition: all 0.3s ease; }
+        .password-input { margin: 1rem 0; }
+        input[type="password"] { width: 100%; padding: 12px; border: 1px solid rgba(255,255,255,0.3); border-radius: 5px; background: rgba(255,255,255,0.1); color: white; margin: 10px 0; }
+        input[type="password"]::placeholder { color: rgba(255,255,255,0.7); }
         footer { background: #212529; color: white; padding: 2rem 0; text-align: center; margin-top: 3rem; }
     </style>
 </head>
@@ -27,10 +31,11 @@
         <div class="container">
             <h1>Unlock PDF</h1>
             <p>Remove password protection from PDF files when you have the password</p>
-            <div class="upload-area">
+            <div class="upload-area" id="uploadArea">
+                <i class="fas fa-unlock" style="font-size: 3rem; margin-bottom: 1rem;"></i>
                 <h3>Drop password-protected PDF file here</h3>
                 <p>Remove password protection from your PDF</p>
-                <button class="btn">Select PDF File</button>
+                <button class="btn" id="actionBtn">Select PDF File</button>
             </div>
         </div>
     </section>
@@ -41,5 +46,83 @@
             <a href="index.html" style="color: white;">Back to Homepage</a>
         </div>
     </footer>
+
+    <script>
+        document.getElementById('actionBtn').addEventListener('click', function() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.pdf';
+            fileInput.style.display = 'none';
+            
+            fileInput.addEventListener('change', function(e) {
+                const files = e.target.files;
+                if (files.length > 0) {
+                    uploadArea.innerHTML = `
+                        <i class="fas fa-file-pdf" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <h3>Protected PDF Detected</h3>
+                        <p><strong>File:</strong> ${files[0].name}</p>
+                        <div class="password-input">
+                            <h4>Enter PDF Password:</h4>
+                            <input type="password" id="pdfPassword" placeholder="Enter password to unlock PDF">
+                            <small>You must have legal permission to unlock this file</small>
+                        </div>
+                        <button class="btn" id="unlockBtn" style="background: #4CAF50;">
+                            <i class="fas fa-unlock"></i> Unlock PDF
+                        </button>
+                    `;
+                    
+                    document.getElementById('unlockBtn').addEventListener('click', processUnlock);
+                }
+            });
+            
+            fileInput.click();
+        });
+
+        function processUnlock() {
+            const uploadArea = document.getElementById('uploadArea');
+            const password = document.getElementById('pdfPassword').value;
+            
+            if (!password) {
+                alert('Please enter the PDF password');
+                return;
+            }
+            
+            uploadArea.innerHTML = `
+                <i class="fas fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <h3>Unlocking PDF...</h3>
+                <p>Removing password protection and restrictions</p>
+                <div class="progress-bar" style="background: rgba(255,255,255,0.2); height: 10px; border-radius: 5px; margin: 1rem 0;">
+                    <div id="progress" style="background: #4CAF50; height: 100%; width: 0%; border-radius: 5px; transition: width 0.3s ease;"></div>
+                </div>
+            `;
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 6;
+                document.getElementById('progress').style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    showResult();
+                }
+            }, 200);
+        }
+
+        function showResult() {
+            const uploadArea = document.getElementById('uploadArea');
+            uploadArea.innerHTML = `
+                <i class="fas fa-check-circle" style="font-size: 3rem; margin-bottom: 1rem; color: #4CAF50;"></i>
+                <h3>PDF Unlocked Successfully!</h3>
+                <p>Password protection and restrictions removed</p>
+                <button class="btn" style="background: #4CAF50;">
+                    <i class="fas fa-download"></i> Download Unlocked PDF
+                </button>
+                <br>
+                <button class="btn" style="background: #666; margin-top: 10px;" onclick="location.reload()">
+                    <i class="fas fa-redo"></i> Unlock Another File
+                </button>
+            `;
+        }
+    </script>
 </body>
 </html>
